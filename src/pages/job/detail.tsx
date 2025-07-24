@@ -1,107 +1,127 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useState, useEffect } from 'react';
-import { IJob } from "@/types/backend";
 import { callFetchJobById } from "@/config/api";
-import styles from 'styles/client.module.scss';
-import parse from 'html-react-parser';
-import { Col, Divider, Row, Skeleton, Tag } from "antd";
+import { Card, Col, Divider, Row, Skeleton, Tag, Button, Space } from "antd";
 import { DollarOutlined, EnvironmentOutlined, HistoryOutlined } from "@ant-design/icons";
 import { getLocationName } from "@/config/utils";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import ApplyModal from "@/components/client/modal/apply.modal";
-dayjs.extend(relativeTime)
+import parse from 'html-react-parser';
+import { IJob } from "@/types/backend";
 
+dayjs.extend(relativeTime);
 
-const ClientJobDetailPage = (props: any) => {
+const ClientJobDetailPage = () => {
     const [jobDetail, setJobDetail] = useState<IJob | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
     let location = useLocation();
     let params = new URLSearchParams(location.search);
-    const id = params?.get("id"); // job id
+    const id = params?.get("id");
 
     useEffect(() => {
         const init = async () => {
             if (id) {
-                setIsLoading(true)
+                setIsLoading(true);
                 const res = await callFetchJobById(id);
                 if (res?.data) {
-                    setJobDetail(res.data)
+                    setJobDetail(res.data);
                 }
-                setIsLoading(false)
+                setIsLoading(false);
             }
-        }
+        };
         init();
     }, [id]);
 
     return (
-        <div className={`${styles["container"]} ${styles["detail-job-section"]}`}>
-            {isLoading ?
-                <Skeleton />
-                :
-                <Row gutter={[20, 20]}>
-                    {jobDetail && jobDetail._id &&
+        <div className="container mx-auto px-4 py-8">
+            {isLoading ? (
+                <Skeleton active paragraph={{ rows: 8 }} />
+            ) : (
+                <Row gutter={[24, 24]}>
+                    {jobDetail && jobDetail._id && (
                         <>
-                            <Col span={24} md={16}>
-                                <div className={styles["header"]}>
-                                    {jobDetail.name}
-                                </div>
-                                <div>
-                                    <button
+                            <Col xs={24} md={16}>
+                                <Card
+                                    className="shadow-sm border border-gray-300 rounded-lg"
+                                    bodyStyle={{ padding: '24px' }}
+                                >
+                                    <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                                        {jobDetail.name}
+                                    </h1>
+                                    <Button
+                                        type="primary"
+                                        size="large"
+                                        className="bg-gray-900 hover:bg-gray-800 text-white mb-6"
                                         onClick={() => setIsModalOpen(true)}
-                                        className={styles["btn-apply"]}
-                                    >Apply Now</button>
-                                </div>
-                                <Divider />
-                                <div className={styles["skills"]}>
-                                    {jobDetail?.skills?.map((item, index) => {
-                                        return (
-                                            <Tag key={`${index}-key`} color="gold" >
-                                                {item}
-                                            </Tag>
-                                        )
-                                    })}
-                                </div>
-                                <div className={styles["salary"]}>
-                                    <DollarOutlined />
-                                    <span>&nbsp;{(jobDetail.salary + "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ</span>
-                                </div>
-                                <div className={styles["location"]}>
-                                    <EnvironmentOutlined style={{ color: '#58aaab' }} />&nbsp;{getLocationName(jobDetail.location)}
-                                </div>
-                                <div>
-                                    <HistoryOutlined /> {dayjs(jobDetail.updatedAt).fromNow()}
-                                </div>
-                                <Divider />
-                                {parse(jobDetail.description)}
+                                    >
+                                        Apply Now
+                                    </Button>
+                                    <Divider className="my-6" />
+                                    <div className="mb-6">
+                                        <Space wrap>
+                                            {jobDetail?.skills?.map((item, index) => (
+                                                <Tag
+                                                    key={`${index}-key`}
+                                                    className="bg-gray-100 text-gray-800 border-none px-3 py-1 rounded-full text-sm font-medium"
+                                                >
+                                                    {item}
+                                                </Tag>
+                                            ))}
+                                        </Space>
+                                    </div>
+                                    <div className="space-y-4 mb-6">
+                                        <div className="flex items-center text-gray-700">
+                                            <DollarOutlined className="text-lg mr-2 text-gray-900" />
+                                            <span className="text-lg">
+                                                {(jobDetail.salary + "").replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center text-gray-700">
+                                            <EnvironmentOutlined className="text-lg mr-2 text-gray-900" />
+                                            <span className="text-lg">{getLocationName(jobDetail.location)}</span>
+                                        </div>
+                                        <div className="flex items-center text-gray-500">
+                                            <HistoryOutlined className="text-lg mr-2" />
+                                            <span>{dayjs(jobDetail.updatedAt).fromNow()}</span>
+                                        </div>
+                                    </div>
+                                    <Divider className="my-6" />
+                                    <div className="prose max-w-none text-gray-700">
+                                        {parse(jobDetail.description)}
+                                    </div>
+                                </Card>
                             </Col>
-
-                            <Col span={24} md={8}>
-                                <div className={styles["company"]}>
-                                    <div>
+                            <Col xs={24} md={8}>
+                                <Card
+                                    className="shadow-sm border border-gray-300 rounded-lg"
+                                    bodyStyle={{ padding: '24px' }}
+                                >
+                                    <div className="flex flex-col items-center text-center">
                                         <img
-                                            alt="example"
+                                            alt="Company Logo"
                                             src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${jobDetail.company?.logo}`}
+                                            className="w-24 h-24 object-contain mb-4 rounded-lg"
                                         />
+                                        <h2 className="text-xl font-semibold text-gray-900">
+                                            {jobDetail.company?.name}
+                                        </h2>
                                     </div>
-                                    <div>
-                                        {jobDetail.company?.name}
-                                    </div>
-                                </div>
+                                </Card>
                             </Col>
                         </>
-                    }
+                    )}
                 </Row>
-            }
+            )}
             <ApplyModal
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 jobDetail={jobDetail}
             />
         </div>
-    )
-}
+    );
+};
+
 export default ClientJobDetailPage;

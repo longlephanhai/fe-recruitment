@@ -4,7 +4,6 @@ import { callLogin } from 'config/api';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUserLoginInfo } from '@/redux/slice/accountSlide';
-import styles from 'styles/auth.module.scss';
 import { useAppSelector } from '@/redux/hooks';
 
 const LoginPage = () => {
@@ -18,12 +17,10 @@ const LoginPage = () => {
     const callback = params?.get("callback");
 
     useEffect(() => {
-        //đã login => redirect to '/'
         if (isAuthenticated) {
-            // navigate('/');
             window.location.href = '/';
         }
-    }, [])
+    }, [isAuthenticated]);
 
     const onFinish = async (values: any) => {
         const { username, password } = values;
@@ -32,7 +29,7 @@ const LoginPage = () => {
         setIsSubmit(false);
         if (res?.data) {
             localStorage.setItem('access_token', res.data.access_token);
-            dispatch(setUserLoginInfo(res.data.user))
+            dispatch(setUserLoginInfo(res.data.user));
             message.success('Đăng nhập tài khoản thành công!');
             window.location.href = callback ? callback : '/';
         } else {
@@ -41,64 +38,68 @@ const LoginPage = () => {
                 description:
                     res.message && Array.isArray(res.message) ? res.message[0] : res.message,
                 duration: 5
-            })
+            });
         }
     };
 
-
     return (
-        <div className={styles["login-page"]}>
-            <main className={styles.main}>
-                <div className={styles.container}>
-                    <section className={styles.wrapper}>
-                        <div className={styles.heading}>
-                            <h2 className={`${styles.text} ${styles["text-large"]}`}>Đăng Nhập</h2>
-                            <Divider />
-
-                        </div>
-                        <Form
-                            name="basic"
-                            // style={{ maxWidth: 600, margin: '0 auto' }}
-                            onFinish={onFinish}
-                            autoComplete="off"
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="container mx-auto px-4">
+                <div className="max-w-md mx-auto bg-white shadow-sm border border-gray-300 rounded-lg p-8">
+                    <div className="text-center mb-6">
+                        <h2 className="text-3xl font-bold text-gray-900">Đăng Nhập</h2>
+                        <Divider className="my-4" />
+                    </div>
+                    <Form
+                        name="basic"
+                        onFinish={onFinish}
+                        autoComplete="off"
+                        layout="vertical"
+                    >
+                        <Form.Item
+                            label={<span className="text-gray-700 font-medium">Email</span>}
+                            name="username"
+                            rules={[{ required: true, message: 'Email không được để trống!' }]}
                         >
-                            <Form.Item
-                                labelCol={{ span: 24 }} //whole column
-                                label="Email"
-                                name="username"
-                                rules={[{ required: true, message: 'Email không được để trống!' }]}
-                            >
-                                <Input />
-                            </Form.Item>
+                            <Input
+                                className="rounded-md border-gray-300 focus:border-gray-900 focus:ring-gray-900"
+                                placeholder="Nhập email của bạn"
+                            />
+                        </Form.Item>
 
-                            <Form.Item
-                                labelCol={{ span: 24 }} //whole column
-                                label="Mật khẩu"
-                                name="password"
-                                rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
-                            >
-                                <Input.Password />
-                            </Form.Item>
+                        <Form.Item
+                            label={<span className="text-gray-700 font-medium">Mật khẩu</span>}
+                            name="password"
+                            rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
+                        >
+                            <Input.Password
+                                className="rounded-md border-gray-300 focus:border-gray-900 focus:ring-gray-900"
+                                placeholder="Nhập mật khẩu"
+                            />
+                        </Form.Item>
 
-                            <Form.Item
-                            // wrapperCol={{ offset: 6, span: 16 }}
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                loading={isSubmit}
+                                className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-md py-2"
                             >
-                                <Button type="primary" htmlType="submit" loading={isSubmit}>
-                                    Đăng nhập
-                                </Button>
-                            </Form.Item>
-                            <Divider>Or</Divider>
-                            <p className="text text-normal">Chưa có tài khoản ?
-                                <span>
-                                    <Link to='/register' > Đăng Ký </Link>
-                                </span>
-                            </p>
-                        </Form>
-                    </section>
+                                Đăng nhập
+                            </Button>
+                        </Form.Item>
+                        <Divider className="my-4">Hoặc</Divider>
+                        <p className="text-center text-gray-600">
+                            Chưa có tài khoản?{' '}
+                            <Link to="/register" className="text-gray-900 hover:underline font-medium">
+                                Đăng Ký
+                            </Link>
+                        </p>
+                    </Form>
                 </div>
-            </main>
+            </div>
         </div>
-    )
-}
+    );
+};
 
 export default LoginPage;

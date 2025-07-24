@@ -189,16 +189,16 @@ const ManageAccount = (props: IProps) => {
             label: `Nhận Jobs qua Email`,
             children: <JobByEmail />,
         },
-        {
-            key: 'user-update-info',
-            label: `Cập nhật thông tin`,
-            children: <UserUpdateInfo />,
-        },
-        {
-            key: 'user-password',
-            label: `Thay đổi mật khẩu`,
-            children: `//todo`,
-        },
+        // {
+        //     key: 'user-update-info',
+        //     label: `Cập nhật thông tin`,
+        //     children: <UserUpdateInfo />,
+        // },
+        // {
+        //     key: 'user-password',
+        //     label: `Thay đổi mật khẩu`,
+        //     children: `//todo`,
+        // },
     ];
 
 

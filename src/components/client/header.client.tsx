@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CodeOutlined, ContactsOutlined, DashOutlined, LogoutOutlined, MenuFoldOutlined, RiseOutlined, TwitterOutlined } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, MenuProps, Space, message } from 'antd';
+import { Avatar, Drawer, Dropdown, MenuProps, Space, message, Typography } from 'antd';
 import { Menu, ConfigProvider } from 'antd';
-import styles from '@/styles/client.module.scss';
-import { isMobile } from 'react-device-detect';
 import { FaReact } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
@@ -12,22 +10,19 @@ import { callLogout } from '@/config/api';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
 import ManageAccount from './modal/manage.account';
 
-const Header = (props: any) => {
+const Header = (props:any) => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-
     const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
     const user = useAppSelector(state => state.account.user);
-    const [openMobileMenu, setOpenMobileMenu] = useState<boolean>(false);
-
+    const [openMobileMenu, setOpenMobileMenu] = useState(false);
     const [current, setCurrent] = useState('home');
     const location = useLocation();
-
-    const [openMangeAccount, setOpenManageAccount] = useState<boolean>(false);
+    const [openManageAccount, setOpenManageAccount] = useState(false);
 
     useEffect(() => {
         setCurrent(location.pathname);
-    }, [location])
+    }, [location]);
 
     const items: MenuProps['items'] = [
         {
@@ -44,13 +39,12 @@ const Header = (props: any) => {
             label: <Link to={'/company'}>Top Công ty IT</Link>,
             key: '/company',
             icon: <RiseOutlined />,
-        }
+        },
     ];
-
-
 
     const onClick: MenuProps['onClick'] = (e) => {
         setCurrent(e.key);
+        setOpenMobileMenu(false);
     };
 
     const handleLogout = async () => {
@@ -58,25 +52,23 @@ const Header = (props: any) => {
         if (res && res.data) {
             dispatch(setLogoutAction({}));
             message.success('Đăng xuất thành công');
-            navigate('/')
+            navigate('/');
         }
-    }
+    };
 
-    const itemsDropdown = [
+    const itemsDropdown: MenuProps['items'] = [
         {
             label: <label
                 style={{ cursor: 'pointer' }}
                 onClick={() => setOpenManageAccount(true)}
             >Quản lý tài khoản</label>,
             key: 'manage-account',
-            icon: <ContactsOutlined />
+            icon: <ContactsOutlined />,
         },
         {
-            label: <Link
-                to={"/admin"}
-            >Trang Quản Trị</Link>,
+            label: <Link to={"/admin"}>Trang Quản Trị</Link>,
             key: 'admin',
-            icon: <DashOutlined />
+            icon: <DashOutlined />,
         },
         {
             label: <label
@@ -84,81 +76,132 @@ const Header = (props: any) => {
                 onClick={() => handleLogout()}
             >Đăng xuất</label>,
             key: 'logout',
-            icon: <LogoutOutlined />
+            icon: <LogoutOutlined />,
         },
     ];
 
     const itemsMobiles = [...items, ...itemsDropdown];
 
     return (
-        <>
-            <div className={styles["header-section"]}>
-                <div className={styles["container"]}>
-                    {!isMobile ?
-                        <div style={{ display: "flex", gap: 30 }}>
-                            <div className={styles['brand']} >
-                                <FaReact onClick={() => navigate('/')} title='React' />
-                            </div>
-                            <div className={styles['top-menu']}>
-                                <ConfigProvider
-                                    theme={{
-                                        token: {
-                                            colorPrimary: '#fff',
-                                            colorBgContainer: '#222831',
-                                            colorText: '#a7a7a7',
-                                        },
-                                    }}
-                                >
+        <div className="bg-[#18181b] border-b border-[#27272a] shadow-sm">
+            <div className="container mx-auto px-4 py-3">
+                <div className="flex items-center justify-between">
+                    {/* Logo */}
+                    <div className="flex items-center gap-3">
+                        <FaReact 
+                            className="text-2xl text-zinc-200 hover:text-zinc-400 transition-colors cursor-pointer" 
+                            onClick={() => navigate('/')} 
+                            title="DevCareer" 
+                        />
+                        <Typography.Title level={4} className="!text-zinc-200 !m-0 hidden md:block">
+                            DevCareer
+                        </Typography.Title>
+                    </div>
 
-                                    <Menu
-                                        // onClick={onClick}
-                                        selectedKeys={[current]}
-                                        mode="horizontal"
-                                        items={items}
-                                    />
-                                </ConfigProvider>
-                                <div className={styles['extra']}>
-                                    {isAuthenticated === false ?
-                                        <Link to={'/login'}>Đăng Nhập</Link>
-                                        :
-                                        <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
-                                            <Space style={{ cursor: "pointer" }}>
-                                                <span>Welcome {user?.name}</span>
-                                                <Avatar> {user?.name?.substring(0, 2)?.toUpperCase()} </Avatar>
-                                            </Space>
-                                        </Dropdown>
-                                    }
+                    {/* Desktop Menu */}
+                    <div className="hidden md:flex items-center gap-6">
+                        <ConfigProvider
+                            theme={{
+                                token: {
+                                    colorPrimary: '#ffffff',
+                                    colorBgContainer: 'transparent',
+                                    colorText: '#d4d4d8',
+                                    colorBgTextHover: '#ffffff',
+                                    controlItemBgActive: '#27272a',
+                                },
+                                components: {
+                                    Menu: {
+                                        itemHoverBg: '#27272a',
+                                        itemSelectedBg: '#27272a',
+                                        itemSelectedColor: '#ffffff',
+                                        itemBg: 'transparent',
+                                    },
+                                },
+                            }}
+                        >
+                            <Menu
+                                onClick={onClick}
+                                selectedKeys={[current]}
+                                mode="horizontal"
+                                items={items}
+                                className="bg-transparent border-0"
+                            />
+                        </ConfigProvider>
 
-                                </div>
-
-                            </div>
+                        {/* Auth Section */}
+                        <div className="flex items-center">
+                            {isAuthenticated ? (
+                                <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
+                                    <Space className="cursor-pointer hover:bg-[#27272a] p-2 rounded transition-colors">
+                                        <span className="text-zinc-200 font-medium">Welcome, {user?.name}</span>
+                                        <Avatar className="bg-[#3f3f46]">
+                                            {user?.name?.substring(0, 2)?.toUpperCase()}
+                                        </Avatar>
+                                    </Space>
+                                </Dropdown>
+                            ) : (
+                                <Link to="/login" className="text-zinc-200 font-medium hover:text-white transition-colors">
+                                    Đăng Nhập
+                                </Link>
+                            )}
                         </div>
-                        :
-                        <div className={styles['header-mobile']}>
-                            <span>Your APP</span>
-                            <MenuFoldOutlined onClick={() => setOpenMobileMenu(true)} />
-                        </div>
-                    }
+                    </div>
+
+                    {/* Mobile Menu Trigger */}
+                    <div className="md:hidden">
+                        <MenuFoldOutlined 
+                            className="text-xl text-zinc-200 hover:text-white transition-colors" 
+                            onClick={() => setOpenMobileMenu(true)} 
+                        />
+                    </div>
                 </div>
             </div>
-            <Drawer title="Chức năng"
+
+            {/* Mobile Drawer */}
+            <Drawer
+                title={<span className="text-zinc-200 font-semibold">DevCareer</span>}
                 placement="right"
                 onClose={() => setOpenMobileMenu(false)}
                 open={openMobileMenu}
+                styles={{
+                    header: { background: '#18181b', borderBottom: '1px solid #27272a' },
+                    body: { background: '#1f1f23', padding: 0 },
+                }}
             >
-                <Menu
-                    onClick={onClick}
-                    selectedKeys={[current]}
-                    mode="vertical"
-                    items={itemsMobiles}
-                />
+                <ConfigProvider
+                    theme={{
+                        token: {
+                            colorPrimary: '#ffffff',
+                            colorBgContainer: '#1f1f23',
+                            colorText: '#d4d4d8',
+                        },
+                        components: {
+                            Menu: {
+                                itemHoverBg: '#27272a',
+                                itemSelectedBg: '#27272a',
+                                itemSelectedColor: '#ffffff',
+                                itemBg: '#1f1f23',
+                            },
+                        },
+                    }}
+                >
+                    <Menu
+                        onClick={onClick}
+                        selectedKeys={[current]}
+                        mode="vertical"
+                        items={itemsMobiles}
+                        className="border-0"
+                    />
+                </ConfigProvider>
             </Drawer>
+
+            {/* Manage Account Modal */}
             <ManageAccount
-                open={openMangeAccount}
-                onClose={setOpenManageAccount}
+                open={openManageAccount}
+                onClose={() => setOpenManageAccount(false)}
             />
-        </>
-    )
+        </div>
+    );
 };
 
 export default Header;
