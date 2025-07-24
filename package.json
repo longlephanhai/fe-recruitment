@@ -1,7 +1,7 @@
 {
   "name": "reat-vite",
   "author": "Le Phan Hai Long",
-  "description": "Frontend for series Nest.JS Youtube Hỏi Dân IT",
+  "description": "React Vite Template",
   "private": true,
   "version": "1.0.0",
   "type": "module",
