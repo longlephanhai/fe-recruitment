@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { CodeOutlined, ContactsOutlined, DashOutlined, LogoutOutlined, MenuFoldOutlined, RiseOutlined, TwitterOutlined } from '@ant-design/icons';
+import { CodeOutlined, ContactsOutlined, DashOutlined, LogoutOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import { Avatar, Drawer, Dropdown, MenuProps, Space, message, Typography } from 'antd';
 import { Menu, ConfigProvider } from 'antd';
-import { FaReact } from 'react-icons/fa';
+import { FaBuilding, FaDev, FaHome } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -10,7 +10,8 @@ import { callLogout } from '@/config/api';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
 import ManageAccount from './modal/manage.account';
 
-const Header = (props:any) => {
+
+const Header = (props: any) => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
@@ -28,7 +29,7 @@ const Header = (props:any) => {
         {
             label: <Link to={'/'}>Trang Chủ</Link>,
             key: '/',
-            icon: <TwitterOutlined />,
+            icon: <FaHome />,
         },
         {
             label: <Link to={'/job'}>Việc Làm IT</Link>,
@@ -38,7 +39,7 @@ const Header = (props:any) => {
         {
             label: <Link to={'/company'}>Top Công ty IT</Link>,
             key: '/company',
-            icon: <RiseOutlined />,
+            icon: <FaBuilding />,
         },
     ];
 
@@ -88,10 +89,10 @@ const Header = (props:any) => {
                 <div className="flex items-center justify-between">
                     {/* Logo */}
                     <div className="flex items-center gap-3">
-                        <FaReact 
-                            className="text-2xl text-zinc-200 hover:text-zinc-400 transition-colors cursor-pointer" 
-                            onClick={() => navigate('/')} 
-                            title="DevCareer" 
+                        <FaDev
+                            className="text-2xl text-zinc-200 hover:text-zinc-400 transition-colors cursor-pointer"
+                            onClick={() => navigate('/')}
+                            title="DevCareer"
                         />
                         <Typography.Title level={4} className="!text-zinc-200 !m-0 hidden md:block">
                             DevCareer
@@ -149,9 +150,9 @@ const Header = (props:any) => {
 
                     {/* Mobile Menu Trigger */}
                     <div className="md:hidden">
-                        <MenuFoldOutlined 
-                            className="text-xl text-zinc-200 hover:text-white transition-colors" 
-                            onClick={() => setOpenMobileMenu(true)} 
+                        <MenuFoldOutlined
+                            className="text-xl text-zinc-200 hover:text-white transition-colors"
+                            onClick={() => setOpenMobileMenu(true)}
                         />
                     </div>
                 </div>

@@ -8,8 +8,6 @@ import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     AliwangwangOutlined,
-    LogoutOutlined,
-    HeartTwoTone,
     BugOutlined,
     ScheduleOutlined,
 } from '@ant-design/icons';
@@ -23,7 +21,7 @@ import type { MenuProps } from 'antd';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
 import { ALL_PERMISSIONS } from '@/config/permissions';
 
-const { Content, Footer, Sider } = Layout;
+const { Content, Sider } = Layout;
 
 const LayoutAdmin = () => {
     const location = useLocation();
@@ -108,9 +106,6 @@ const LayoutAdmin = () => {
                     key: '/admin/role',
                     icon: <ExceptionOutlined />
                 }] : []),
-
-
-
             ];
 
             setMenuItems(full);
@@ -128,17 +123,6 @@ const LayoutAdmin = () => {
             navigate('/')
         }
     }
-
-    // if (isMobile) {
-    //     items.push({
-    //         label: <label
-    //             style={{ cursor: 'pointer' }}
-    //             onClick={() => handleLogout()}
-    //         >Đăng xuất</label>,
-    //         key: 'logout',
-    //         icon: <LogoutOutlined />
-    //     })
-    // }
 
     const itemsDropdown = [
         {
@@ -201,7 +185,7 @@ const LayoutAdmin = () => {
 
                             <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                                 <Space style={{ cursor: "pointer" }}>
-                                    Welcome {user?.name}
+                                    Administrator {user?.name}
                                     <Avatar> {user?.name?.substring(0, 2)?.toUpperCase()} </Avatar>
 
                                 </Space>
@@ -211,7 +195,7 @@ const LayoutAdmin = () => {
                     <Content style={{ padding: '15px' }}>
                         <Outlet />
                     </Content>
-        
+
                 </Layout>
             </Layout>
 
